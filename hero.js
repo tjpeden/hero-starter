@@ -176,11 +176,26 @@ var moves = {
   // This hero will try really hard not to die.
   coward : function(gameData, helpers) {
     return helpers.findNearestHealthWell(gameData);
+  },
+  
+  byTheNumbers: function(gameData, helpers) {
+    var healthThreshold = 30,
+        hero            = gameData.activeHero,
+        boardLenght     = gameData.board.lengthOfSide,
+        healthWell      = helpers.findNearestHealthWell(gameData),
+        weakEnemy       = helpers.findNearestWeakerEnemy(gameData),
+        diamondMine     = helpers.findNearestNonTeamDiamondMine(gameData);
+    
+    var pathFinder = new helpers.PathFinder();
+    
+    var value = helpers.healthCriticalityGivenDistanceToWell(hero.health, healthThreshold, helpers.closeFactor(healthWell.distance, boardLenght));
+    pathFinder.add(healthWell.direction, value);
+    pathFinder.add(weakEnemy.direction, helpers.closeFactor(weakEnemy.distance, boardLenght));
+    pathFinder.add(diamondMine.direction, helpers.closeFactor(diamondMine.distance, boardLenght));
+    
+    return pathFinder.path;
   }
  };
 
-//  Set our heros strategy
-var  move =  moves.aggressor;
-
 // Export the move function here
-module.exports = move;
+module.exports = moves.byTheNumbers;

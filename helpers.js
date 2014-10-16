@@ -246,4 +246,48 @@ helpers.findNearestTeamMember = function(gameData) {
   return pathInfoObject.direction;
 };
 
+helpers.closeFactor = function(value, max) {
+  return (max - value) / max;
+};
+
+helpers.healthCriticality = function(health, threshold) {
+  var max    = 100 - threshold,
+      offset = health - threshold;
+  
+  return helpers.closeFactor(offset, max);
+};
+
+helpers.healthCriticalityGivenDistanceToWell = function(health, threshold, distanceFactor) {
+  var criticality = helpers.healthCriticality(threshold, health);
+  
+  return ((criticality * 0.8) + (distanceFactor * 0.2)) / 1;
+};
+
+helpers.PathFinder = (function() {
+  function PathFinder() {
+    this.paths = {};
+  }
+  
+  PathFinder.prototype = {
+    get path() {
+      var keys = Object.keys(this.paths), result = 0;
+      
+      for(var i = 0, key; (key = keys[i]); ++i) {
+        var value = this.paths[key];
+        result = value > result ? value : result;
+      }
+      
+      return result;
+    },
+    
+    add: function(direction, value) {
+      this.paths[direction] = this.paths[direction] || 0;
+      
+      this.paths[direction] += value;
+    }
+  };
+  
+  return PathFinder;
+})();
+
 module.exports = helpers;
