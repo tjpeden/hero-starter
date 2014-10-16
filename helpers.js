@@ -258,9 +258,11 @@ helpers.healthCriticality = function(health, threshold) {
 };
 
 helpers.healthCriticalityGivenDistanceToWell = function(health, threshold, distanceFactor) {
-  var criticality = helpers.healthCriticality(threshold, health);
+  var criticality = helpers.healthCriticality(threshold, health),
+      result = ((criticality * 0.8) + (distanceFactor * 0.2)) / 1;
   
-  return ((criticality * 0.8) + (distanceFactor * 0.2)) / 1;
+  if(Number.isFinite(result)) return result;
+  return 0;
 };
 
 helpers.PathFinder = (function() {
@@ -270,11 +272,15 @@ helpers.PathFinder = (function() {
   
   PathFinder.prototype = {
     get path() {
-      var keys = Object.keys(this.paths), result = 0;
+      var keys = Object.keys(this.paths), max = 0, result;
       
       for(var i = 0, key; (key = keys[i]); ++i) {
         var value = this.paths[key];
-        result = value > result ? value : result;
+        
+        if(value > max) {
+          max = value;
+          result = key;
+        }
       }
       
       return result;

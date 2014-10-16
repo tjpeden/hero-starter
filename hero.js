@@ -181,17 +181,29 @@ var moves = {
   byTheNumbers: function(gameData, helpers) {
     var healthThreshold = 30,
         hero            = gameData.activeHero,
-        boardLenght     = gameData.board.lengthOfSide,
-        healthWell      = helpers.findNearestHealthWell(gameData),
-        weakEnemy       = helpers.findNearestWeakerEnemy(gameData),
-        diamondMine     = helpers.findNearestNonTeamDiamondMine(gameData);
+        board           = gameData.board,
+        size            = board.lengthOfSide;
+    
+    var healthWell = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+      return tile.type === 'HealthWell';
+    });
+    
+    var weakEnemy = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+      return tile.type === 'Hero' && tile.team !== hero.team && tile.health < hero.health;
+    });
+    
+    var diamondMine = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+      return tile.type === 'DiamondMine' && !(tile.owner && tile.owner.team === hero.team);
+    });
     
     var pathFinder = new helpers.PathFinder();
     
-    var value = helpers.healthCriticalityGivenDistanceToWell(hero.health, healthThreshold, helpers.closeFactor(healthWell.distance, boardLenght));
+    var value = helpers.healthCriticalityGivenDistanceToWell(hero.health, healthThreshold, helpers.closeFactor(healthWell.distance, size));
     pathFinder.add(healthWell.direction, value);
-    pathFinder.add(weakEnemy.direction, helpers.closeFactor(weakEnemy.distance, boardLenght));
-    pathFinder.add(diamondMine.direction, helpers.closeFactor(diamondMine.distance, boardLenght));
+    if(weakEnemy) pathFinder.add(weakEnemy.direction, helpers.closeFactor(weakEnemy.distance, size));
+    if(diamondMine) pathFinder.add(diamondMine.direction, helpers.closeFactor(diamondMine.distance, size));
+    
+    console.log(pathFinder);
     
     return pathFinder.path;
   }
