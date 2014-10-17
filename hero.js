@@ -197,27 +197,35 @@ var moves = {
         board           = gameData.board,
         size            = computeSize(board.lengthOfSide);
     
-    var healthWell = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+    var healthWell = helpers.findNearestObjectDirectionAndDistance(board, hero, function(tile) {
       return tile.type === 'HealthWell';
     });
     
-    var weakEnemy = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+    var priest = helpers.findNearestObjectDirectionAndDistance(board, hero, function(tile) {
+      return tile.type === 'Hero' && tile.team === hero.team;
+    });
+    
+    var weakEnemy = helpers.findNearestObjectDirectionAndDistance(board, hero, function(tile) {
       return tile.type === 'Hero' && tile.team !== hero.team && tile.health < hero.health;
     });
     
-    var strongEnemy = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+    var strongEnemy = helpers.findNearestObjectDirectionAndDistance(board, hero, function(tile) {
       return tile.type === 'Hero' && tile.team !== hero.team && tile.health >= hero.health;
     });
     
-    var diamondMine = helpers.findNearestObjectDirectionAndDistance(gameData.board, hero, function(tile) {
+    var diamondMine = helpers.findNearestObjectDirectionAndDistance(board, hero, function(tile) {
       return tile.type === 'DiamondMine' && !(tile.owner && tile.owner.team === hero.team);
     });
+    
+    var healthSource = healthWell || priest;
     
     var pathFinder = new helpers.PathFinder(),
         distanceFactor = helpers.distanceFactor.curry(size);
     
-    var value = helpers.healthCriticalityGivenDistanceFactor(hero.health, healthThreshold, distanceFactor(healthWell.distance));
-    pathFinder.add('health', healthWell.direction, value);
+    if(healthSource) {
+      var value = helpers.healthCriticalityGivenDistanceFactor(hero.health, healthThreshold, distanceFactor(healthSource.distance));
+      pathFinder.add('health', healthSource.direction, value);
+    }
     if(diamondMine) pathFinder.add('mine', diamondMine.direction, distanceFactor(diamondMine.distance) * 0.8);
     if(weakEnemy) pathFinder.add('weak enemy', weakEnemy.direction, distanceFactor(weakEnemy.distance) * 0.6);
     if(strongEnemy) pathFinder.add('strong enemy', strongEnemy.direction, distanceFactor(strongEnemy.distance) * 0.4);
