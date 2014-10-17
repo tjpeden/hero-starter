@@ -258,10 +258,10 @@ helpers.healthCriticality = function(health, threshold) {
 };
 
 helpers.healthCriticalityGivenDistanceToWell = function(health, threshold, distanceFactor) {
-  var criticality = helpers.healthCriticality(threshold, health),
+  var criticality = helpers.healthCriticality(health, threshold),
       result = ((criticality * 0.8) + (distanceFactor * 0.2)) / 1;
   
-  if(Number.isFinite(result)) return result;
+  if(Number.isFinite(result) && !Number.isNaN(result)) return result;
   return 0;
 };
 
