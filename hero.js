@@ -216,7 +216,10 @@ var moves = {
     
     return pathFinder.path;
   }
- };
+};
+
+//  Set our heros strategy
+var move = moves.byTheNumbers;
 
 // Export the move function here
-module.exports = moves.byTheNumbers;
+module.exports = move;
