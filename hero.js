@@ -217,9 +217,9 @@ var moves = {
         distanceFactor = helpers.distanceFactor.curry(size);
     
     var value = helpers.healthCriticalityGivenDistanceFactor(hero.health, healthThreshold, distanceFactor(healthWell.distance));
-    pathFinder.add('health', healthWell.direction, value * 1.1);
+    pathFinder.add('health', healthWell.direction, value * 1.3);
     if(diamondMine) pathFinder.add('mine', diamondMine.direction, distanceFactor(diamondMine.distance) * 0.9);
-    if(weakEnemy) pathFinder.add('weak enemy', weakEnemy.direction, distanceFactor(weakEnemy.distance) * 0.9);
+    if(weakEnemy) pathFinder.add('weak enemy', weakEnemy.direction, distanceFactor(weakEnemy.distance) * 0.8);
     if(strongEnemy) pathFinder.add('strong enemy', strongEnemy.direction, distanceFactor(strongEnemy.distance) * 0.4);
     
     console.log(pathFinder.toString());
