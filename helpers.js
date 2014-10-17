@@ -259,7 +259,7 @@ helpers.healthCriticality = function(health, threshold) {
 
 helpers.healthCriticalityGivenDistanceFactor = function(health, threshold, distanceFactor) {
   var criticality = helpers.healthCriticality(health, threshold),
-      result = ((criticality * 0.7) + (distanceFactor * 0.3)) / 1;
+      result = ((criticality * 0.8) + (distanceFactor * 0.2)) / 1;
   
   if(Number.isFinite(result) && !Number.isNaN(result)) return result;
   return 0;
