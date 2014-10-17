@@ -246,7 +246,7 @@ helpers.findNearestTeamMember = function(gameData) {
   return pathInfoObject.direction;
 };
 
-helpers.closeFactor = function(value, max) {
+helpers.distanceFactor = function(max, value) {
   return (max - value) / max;
 };
 
@@ -254,10 +254,10 @@ helpers.healthCriticality = function(health, threshold) {
   var max    = 100 - threshold,
       offset = health - threshold;
   
-  return helpers.closeFactor(offset, max);
+  return helpers.distanceFactor(max, offset);
 };
 
-helpers.healthCriticalityGivenDistanceToWell = function(health, threshold, distanceFactor) {
+helpers.healthCriticalityGivenDistanceFactor = function(health, threshold, distanceFactor) {
   var criticality = helpers.healthCriticality(health, threshold),
       result = ((criticality * 0.8) + (distanceFactor * 0.2)) / 1;
   

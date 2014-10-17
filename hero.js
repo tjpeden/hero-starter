@@ -39,6 +39,15 @@
 
 */
 
+Function.prototype.curry = function() {
+  var slice = Array.prototype.slice,
+      args  = slice.call(arguments);
+  
+  return function() {
+    return this.apply(null, args.concat(slice.call(arguments)));
+  }.bind(this);
+};
+
 // Strategy definitions
 var moves = {
   // Aggressor
@@ -180,7 +189,7 @@ var moves = {
   
   byTheNumbers: function(gameData, helpers) {
     function computeSize(lengthOfSide) {
-      return Math.floor(lengthOfSide * Math.sqrt(lengthOfSide));
+      return Math.ceil(lengthOfSide * Math.sqrt(lengthOfSide));
     }
     
     var healthThreshold = 40,
@@ -204,13 +213,14 @@ var moves = {
       return tile.type === 'DiamondMine' && !(tile.owner && tile.owner.team === hero.team);
     });
     
-    var pathFinder = new helpers.PathFinder();
+    var pathFinder = new helpers.PathFinder(),
+        distanceFactor = helpers.distanceFactor.curry(size);
     
-    var value = helpers.healthCriticalityGivenDistanceToWell(hero.health, healthThreshold, helpers.closeFactor(healthWell.distance, size));
+    var value = helpers.healthCriticalityGivenDistanceFactor(hero.health, healthThreshold, distanceFactor(healthWell.distance));
     pathFinder.add(healthWell.direction, value);
-    if(weakEnemy) pathFinder.add(weakEnemy.direction, helpers.closeFactor(weakEnemy.distance, size));
-    if(diamondMine) pathFinder.add(diamondMine.direction, helpers.closeFactor(diamondMine.distance, size));
-    if(strongEnemy) pathFinder.add(strongEnemy.direction, helpers.closeFactor(strongEnemy.distance, size) * 0.6);
+    if(weakEnemy) pathFinder.add(weakEnemy.direction, distanceFactor(weakEnemy.distance));
+    if(diamondMine) pathFinder.add(diamondMine.direction, distanceFactor(diamondMine.distance));
+    if(strongEnemy) pathFinder.add(strongEnemy.direction, distanceFactor(strongEnemy.distance) * 0.6);
     
     console.log(pathFinder.paths);
     
