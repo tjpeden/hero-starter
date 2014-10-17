@@ -217,12 +217,12 @@ var moves = {
         distanceFactor = helpers.distanceFactor.curry(size);
     
     var value = helpers.healthCriticalityGivenDistanceFactor(hero.health, healthThreshold, distanceFactor(healthWell.distance));
-    pathFinder.add(healthWell.direction, value);
-    if(weakEnemy) pathFinder.add(weakEnemy.direction, distanceFactor(weakEnemy.distance));
-    if(diamondMine) pathFinder.add(diamondMine.direction, distanceFactor(diamondMine.distance));
-    if(strongEnemy) pathFinder.add(strongEnemy.direction, distanceFactor(strongEnemy.distance) * 0.6);
+    pathFinder.add('health', healthWell.direction, value);
+    if(diamondMine) pathFinder.add('mine', diamondMine.direction, distanceFactor(diamondMine.distance) * 0.9);
+    if(weakEnemy) pathFinder.add('weak enemy', weakEnemy.direction, distanceFactor(weakEnemy.distance) * 0.9);
+    if(strongEnemy) pathFinder.add('strong enemy', strongEnemy.direction, distanceFactor(strongEnemy.distance) * 0.4);
     
-    console.log(pathFinder.paths);
+    console.log(pathFinder.toString());
     
     return pathFinder.path;
   }

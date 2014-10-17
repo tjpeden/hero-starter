@@ -268,6 +268,7 @@ helpers.healthCriticalityGivenDistanceFactor = function(health, threshold, dista
 helpers.PathFinder = (function() {
   function PathFinder() {
     this.paths = {};
+    this.meta = {};
   }
   
   PathFinder.prototype = {
@@ -286,10 +287,19 @@ helpers.PathFinder = (function() {
       return result;
     },
     
-    add: function(direction, value) {
+    add: function(name, direction, value) {
       this.paths[direction] = this.paths[direction] || 0;
+      this.meta[direction]  = this.meta[direction]  || [];
       
       this.paths[direction] += value;
+      this.meta[direction].push(name);
+    },
+    
+    toString: function() {
+      var paths = this.paths, meta = this.meta;
+      return Object.keys(paths).map(function(direction) {
+        return '(' + direction + ') ' + meta[direction].join(', ') + ': ' + paths[direction].toFixed(4);
+      }).join(' | ');
     }
   };
   
