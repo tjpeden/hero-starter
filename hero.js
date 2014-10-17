@@ -192,7 +192,7 @@ var moves = {
       return Math.ceil(lengthOfSide * Math.sqrt(lengthOfSide));
     }
     
-    var healthThreshold = 40,
+    var healthThreshold = 50,
         hero            = gameData.activeHero,
         board           = gameData.board,
         size            = computeSize(board.lengthOfSide);
@@ -218,8 +218,8 @@ var moves = {
     
     var value = helpers.healthCriticalityGivenDistanceFactor(hero.health, healthThreshold, distanceFactor(healthWell.distance));
     pathFinder.add('health', healthWell.direction, value);
-    if(diamondMine) pathFinder.add('mine', diamondMine.direction, distanceFactor(diamondMine.distance) * 0.9);
-    if(weakEnemy) pathFinder.add('weak enemy', weakEnemy.direction, distanceFactor(weakEnemy.distance) * 0.8);
+    if(diamondMine) pathFinder.add('mine', diamondMine.direction, distanceFactor(diamondMine.distance));
+    if(weakEnemy) pathFinder.add('weak enemy', weakEnemy.direction, distanceFactor(weakEnemy.distance));
     if(strongEnemy) pathFinder.add('strong enemy', strongEnemy.direction, distanceFactor(strongEnemy.distance) * 0.4);
     
     console.log(pathFinder.toString());
